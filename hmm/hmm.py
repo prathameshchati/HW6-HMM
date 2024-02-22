@@ -42,8 +42,9 @@ class HiddenMarkovModel:
         """        
         
         # Step 1. Initialize variables
-        
-       
+        self.input_observation_states=input_observation_states
+        self.alphas=[] # initialize empty vector of alphas
+
         # Step 2. Calculate probabilities
 
 
