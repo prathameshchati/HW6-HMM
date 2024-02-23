@@ -57,18 +57,18 @@ Finally, please update your README with a brief description of your methods.
 
 [TODO] Complete the HiddenMarkovModel Class methods  <br>
   
-  [x] complete the `forward` function in the HiddenMarkovModelClass <br>
-  [x] complete the `viterbi` function in the HiddenMarkovModelClass <br>
+ - [x] complete the `forward` function in the HiddenMarkovModelClass <br>
+ - [x] complete the `viterbi` function in the HiddenMarkovModelClass <br>
 
 [TODO] Unit Testing  <br>
 
-  [x] Ensure functionality on mini and full weather dataset <br>
-  [x] Account for edge cases 
+ - [x] Ensure functionality on mini and full weather dataset <br>
+ - [x] Account for edge cases 
 
 [TODO] Packaging <br>
-  [x] Update README with description of your methods <br>
-  [x] pip installable module (optional)<br>
-  [x] github actions (install + pytest) (optional)
+ - [x] Update README with description of your methods <br>
+ - [x] pip installable module (optional)<br>
+ - [x] github actions (install + pytest) (optional)
 
 
 ## Completing the Assignment 
