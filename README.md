@@ -1,3 +1,5 @@
+![BuildStatus](https://github.com/prathameshchati/HW6-HMM/actions/workflows/pytest.yml/badge.svg?event=push)
+
 # HW6-HMM
 
 In this assignment, you'll implement the Forward and Viterbi Algorithms (dynamic programming). 
