@@ -2,6 +2,7 @@ import pytest
 from hmm import HiddenMarkovModel
 from hmmlearn.hmm import CategoricalHMM
 import numpy as np
+import warnings
 
 
 # categorical to numerical sequence 
@@ -26,6 +27,8 @@ def test_mini_weather():
 
     In addition, check for at least 2 edge cases using this toy model. 
     """
+
+    # check edge cases in separate test below
 
     mini_hmm=np.load('./data/mini_weather_hmm.npz')
     mini_input=np.load('./data/mini_weather_sequences.npz')
@@ -86,7 +89,6 @@ def test_mini_weather():
     assert (hmm_model_viterbi_table_last_prob-np.exp(hmmlearn_model_viterbi_table_last_prob)) < 0.000000001
     
     # pass
-
 
 
 def test_full_weather():
@@ -165,7 +167,54 @@ def test_full_weather():
     # pass
 
 def test_edge_cases():
-    pass
+    
+    mini_hmm=np.load('./data/mini_weather_hmm.npz')
+    mini_input=np.load('./data/mini_weather_sequences.npz')
+
+    # get vars
+    prior_p=mini_hmm["prior_p"]
+    transition_p=mini_hmm["transition_p"]
+    emission_p=mini_hmm["emission_p"]
+    hidden_states=mini_hmm["hidden_states"]
+    observation_states=mini_hmm["observation_states"]
+
+    # get sequences
+    observation_state_sequence=mini_input["observation_state_sequence"]
+    best_hidden_state_sequence=mini_input["best_hidden_state_sequence"]
+
+    # create cat to num dict
+    hidden_states_dict=reverse_dictionary(dict(enumerate(hidden_states)))
+
+    # initialize hmm model and check that error is raised if any of the dimension constraints are violated
+    with pytest.raises(ValueError) as hmm_model:
+        HiddenMarkovModel(observation_states, hidden_states, np.array([0.6, 0.2, 0.2]), transition_p, emission_p)
+    assert hmm_model.type==ValueError
+
+    with pytest.raises(ValueError) as hmm_model:
+        HiddenMarkovModel(observation_states, hidden_states, prior_p, np.array([[0.5, 0.25, 0.25],[0.3 , 0.7 ]]), emission_p)
+    assert hmm_model.type==ValueError
+
+    with pytest.raises(ValueError) as hmm_model:
+        HiddenMarkovModel(observation_states, hidden_states, prior_p, transition_p, np.array([[0.5, 0.25, 0.25],[0.3 , 0.7 ]]))
+    assert hmm_model.type==ValueError
+
+    # check that error raised when transition or emission probabilities don't sum to 1
+    with pytest.raises(ValueError) as hmm_model:
+        HiddenMarkovModel(observation_states, hidden_states, prior_p, np.array([[0.5, 0.4],[0.3 , 0.7 ]]), emission_p)
+    assert hmm_model.type==ValueError
+
+    with pytest.raises(ValueError) as hmm_model:
+        HiddenMarkovModel(observation_states, hidden_states, prior_p, transition_p, np.array([[0.5, 0.4],[0.3 , 0.7 ]]))
+    assert hmm_model.type==ValueError
+
+    # check that warning is thrown with zero included in transition matrix but still runs
+    hmm_model=HiddenMarkovModel(observation_states, hidden_states, prior_p, np.array([[1, 0],[0.3 , 0.7 ]]), emission_p)
+    with pytest.warns(UserWarning):
+        hmm_model_forward_alpha=hmm_model.forward(observation_state_sequence)
+
+
+
+    # pass
 
 
 

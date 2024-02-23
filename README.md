@@ -1,5 +1,10 @@
 ![BuildStatus](https://github.com/prathameshchati/HW6-HMM/actions/workflows/pytest.yml/badge.svg?event=push)
 
+
+# Implementation details
+
+The forward and viterbi algorithms were both implemented in matrix form instead of using complete iterations over all indices. For the forward algorithm, the prior alphas are first computed and instead of taking an explicit dot product, the respective hidden state values are multiplied with their conditional emission probabilites for the first observed state in the sequence and kept as a vector. Then the model iteratively updates the alpha values using the general HMM scheme. This similar method is used in viterbi, however, now the each alpha is kept as its components instead of sums, which allows us to choose the hidden state component of the alpha that is max and assign indices. Several edge cases are checked for in the implementation to prevent erroneous runs. These are detailed in hmm.py and test_hmm.py.
+
 # HW6-HMM
 
 In this assignment, you'll implement the Forward and Viterbi Algorithms (dynamic programming). 

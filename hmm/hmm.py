@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 class HiddenMarkovModel:
     """
     Class for Hidden Markov Model 
@@ -33,6 +34,26 @@ class HiddenMarkovModel:
 
         self.viterbi_table=None # for later
 
+        # check matrix dimensions of emission matrix; should have same number of rows as hidden states and same number of columns as observed states, otherwise raise error
+        if not (emission_p.shape==(len(hidden_states), len(observation_states))):
+            raise ValueError("The dimensions of the emission matrix are not correct. Please make sure they the number of rows and columns match the number of hidden and observed states, respectively.")
+        
+        # check that dimensions of the transition matrix are square and equal to number of hidden states
+        if not (transition_p.shape==(len(hidden_states), len(hidden_states))):
+            raise ValueError("The dimensions of the transition matrix are not correct. Please make sure they the number of rows and columns match the number of hidden states.")
+
+        # check prior probabilities equal number of hidden states
+        if not (prior_p.shape==(len(hidden_states),)):
+            raise ValueError("The number of prior probabilities given is not equal to the number of hidden states.")
+        
+        # check that the sum of transition probabilities across columns (so sum of each row), is equal to 1
+        if not np.array_equal(transition_p.sum(axis=1),np.ones(transition_p.sum(axis=1).shape)):
+            raise ValueError("The sum of transitions across the columns are not equal to 1, please make sure you are using probabilities that sum to 1.")
+        
+        # check that the sum of emission probabilities across columns (so sum of each row), is equal to 1
+        if not np.array_equal(emission_p.sum(axis=1),np.ones(emission_p.sum(axis=1).shape)):
+            raise ValueError("The sum of emissions across the columns are not equal to 1, please make sure you are using probabilities that sum to 1.")
+
 
     def forward(self, input_observation_states: np.ndarray) -> float:
         """
@@ -46,6 +67,11 @@ class HiddenMarkovModel:
         Returns:
             forward_probability (float): forward probability (likelihood) for the input observed sequence  
         """        
+
+        # raise warning if there exists a transition probability with 0 emission
+        if not np.all(self.transition_p!=0):
+            warnings.warn("Note, transition probabilities contain zeroes, this may throw off the predicted sequences if included by mistake.")
+
         
         # Step 1. Initialize variables
         self.input_observation_states=input_observation_states
@@ -75,7 +101,11 @@ class HiddenMarkovModel:
         Returns:
             best_hidden_state_sequence(list): most likely list of hidden states that generated the sequence observed states
         """        
-        
+
+        # raise warning if there exists a transition probability with 0 emission
+        if not np.all(self.transition_p!=0):
+            warnings.warn("Note, transition probabilities contain zeroes, this may throw off the predicted sequences if included by mistake.")
+
         # Step 1. Initialize variables
         
         #store probabilities of hidden state at each step 
